@@ -1,3 +1,12 @@
+/**
+ * @file randomtape.h
+ * @brief Хедер для наполнения пустого файла целыми числами случайным образом
+ * @version 0.1
+ * @date 2023-03-19
+ * 
+ * @copyright Copyright (c) 2023
+ * 
+ */
 #pragma once
 
 #include <iostream>
@@ -6,7 +15,12 @@
 #include <cstdlib>
 #include <random>
 
-// Наполняет пустой файл filename размером N случайными int числами
+/**
+ * @brief Наполняет пустой файл случайными числами
+ * 
+ * @param filename Имя файла для популяции
+ * @param N Количество чисел в итоговом файле
+ */
 void populateFile(const std::string& filename, const int N) {
     std::random_device rd;
     std::mt19937 gen(rd());

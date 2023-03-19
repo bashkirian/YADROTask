@@ -1,3 +1,12 @@
+/**
+ * @file test_runner.h
+ * @brief Описание простой юнит-тестирующей системы
+ * @version 0.1
+ * @date 2023-03-19
+ * 
+ * @copyright Copyright (c) 2023
+ * 
+ */
 #pragma once
 
 #include <sstream>

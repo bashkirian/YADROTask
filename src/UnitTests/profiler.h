@@ -7,6 +7,10 @@
 using namespace std;
 using namespace std::chrono;
 
+/**
+ * @brief Класс для логирования времени выполнения программы
+ * 
+ */
 class LogDuration
 {
 public:

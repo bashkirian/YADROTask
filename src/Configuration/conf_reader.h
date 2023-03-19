@@ -1,3 +1,13 @@
+/**
+ * @file conf_reader.h
+ * @author Almaz Shagiev (ash_bashkirian@gmail.com)
+ * @brief Файл с читателем конфигурации ленты из файла config.cfg
+ * @version 0.1
+ * @date 2023-03-19
+ * 
+ * @copyright Copyright (c) 2023
+ * 
+ */
 #pragma once 
 
 #include <iostream>
@@ -6,10 +16,19 @@
 #include <map>
 
 
+/**
+ * @brief Пространство имен для конфигурации
+ */
 namespace configuration
 {
     using configurations_map = std::map<std::string, std::map<std::string, std::string>>;
 
+    /**
+     * @brief Функция, необходимая для получения конфигурации, написанной в виде
+     * [section]
+     * name - value
+     * @return configurations_map конфигурации
+     */
     configurations_map ReadConfigurations()
     {
         std::string filename = "config.cfg";

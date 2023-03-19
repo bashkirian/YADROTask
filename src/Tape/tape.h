@@ -5,6 +5,10 @@
 #include <string>
 #include <memory>
 #include <fstream>
+/**
+ * @brief Класс для устройства-ленты
+ * 
+ */
 class TapeDevice { 
 public:
     virtual int read() = 0; 

@@ -1,6 +1,7 @@
 CC=g++
 CFLAGS=-Wall -std=c++14
 
+# FOR WINDOWS
 tapesort:
 	mkdir tmp;
 	$(CC) $(CFLAGS) ..\src\main.cpp ..\src\Sorter\sorter.cpp ..\src\Tape\tape.cpp -o sorttape

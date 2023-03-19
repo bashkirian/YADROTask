@@ -5,6 +5,13 @@
 #include <algorithm>
 using namespace std;
 
+/**
+ * @brief Сортировка ленты
+ * 
+ * @param input_filename 
+ * @param output_filename 
+ * @param new_conf 
+ */
 void TapeSorter::tapesort(string input_filename, string output_filename, configuration::Configuration new_conf)
 {
     TapeFile m_input_tape(input_filename, new_conf);  
@@ -17,6 +24,13 @@ void TapeSorter::tapesort(string input_filename, string output_filename, configu
     merge_tapes(m_output_tape, sub_tapes);
 }
 
+/**
+ * @brief Разбитие ленты на несколько частей, учитывая доступный размер памяти
+ * 
+ * @param m_input_tape 
+ * @param sub_tape_filenames 
+ * @return vector<TapeFile> 
+ */
 vector<TapeFile> TapeSorter::break_tape(TapeFile& m_input_tape, vector<string>& sub_tape_filenames)
 {
     vector<TapeFile> sub_tapes;
@@ -56,6 +70,12 @@ vector<TapeFile> TapeSorter::break_tape(TapeFile& m_input_tape, vector<string>& 
     return sub_tapes;
 }
 
+/**
+ * @brief Слияние сортированных под-лент в отсортированную ленту
+ * 
+ * @param m_output_tape 
+ * @param sub_tapes 
+ */
 void TapeSorter::merge_tapes(TapeFile& m_output_tape, vector<TapeFile>& sub_tapes)
 {
     typedef pair<int, int> ppi; 
@@ -85,7 +105,11 @@ void TapeSorter::merge_tapes(TapeFile& m_output_tape, vector<TapeFile>& sub_tape
     }
 }
 
-// создание временной ленты в папке tmp
+/**
+ * @brief Создание временного файла-ленты
+ * 
+ * @return string 
+ */
 string TapeSorter::create_temporary_file()
 {
     char buffer[256];

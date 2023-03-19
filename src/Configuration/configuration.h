@@ -1,7 +1,21 @@
+/**
+ * @file configuration.h
+ * @brief 
+ * @version 0.1
+ * @date 2023-03-19
+ * 
+ * @copyright Copyright (c) 2023
+ * 
+ */
 #pragma once
-
+/**
+ * @brief Пространство имен для конфигурации
+ */
 namespace configuration
 {
+    /**
+     * @brief Структура конфигурации
+     */
     struct Configuration
     {
         int m_rewind_delay; // задержка перемотки
