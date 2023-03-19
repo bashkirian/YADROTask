@@ -5,6 +5,7 @@
 #include <string>
 #include <map>
 
+
 namespace configuration
 {
     using configurations_map = std::map<std::string, std::map<std::string, std::string>>;

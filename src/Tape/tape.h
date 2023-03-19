@@ -13,6 +13,8 @@ public:
     virtual void shift(int offset) = 0; 
     virtual bool isended() = 0; 
     virtual configuration::Configuration getConfiguration() = 0; 
+    virtual bool isOpen() = 0;
+    virtual void toOpen() = 0;
 };
 
 class TapeFile : public TapeDevice {
@@ -26,7 +28,11 @@ public:
     void shift(int offset) override;
     configuration::Configuration getConfiguration() override;
     bool isended() override;
+    bool isOpen() override;
+    void toOpen() override;
+    ~TapeFile();
 private:
-    std::unique_ptr<std::fstream> m_file; 
+    std::string filename;
+    std::fstream m_file; 
     configuration::Configuration conf; 
 };

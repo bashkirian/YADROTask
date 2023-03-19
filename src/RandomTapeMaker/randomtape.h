@@ -15,7 +15,7 @@ void populateFile(const std::string& filename, const int N) {
     if (file.is_open()) {
         for (int i = 0; i < N; i++) {
             int randNum = dis(gen);
-            file << randNum << " ";
+            file << " " << randNum;
         }
         file.close();
     } else {

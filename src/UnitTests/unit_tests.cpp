@@ -3,13 +3,14 @@
 #include <random>
 #include <ctime>
 
-#include "test_runner.h"                   // юнит-тесты
-#include "configuration.h"                 // определение класса конфигурации
-#include "conf_reader.h"                   // чтение конфигурации
-#include "checker.h"                       // проверка на сортированность
-#include "profiler.h"                      // профилирование
-#include "../RandomTapeMaker/randomtape.h" // создание случайной ленты
-
+#include "test_runner.h"                    // юнит-тесты
+#include "profiler.h"                       // профилирование
+#include "checker.h"                        // проверка на сортированность
+#include "../Configuration/configuration.h" // определение класса конфигурации
+#include "../Configuration/conf_reader.h"   // чтение конфигурации
+#include "../RandomTapeMaker/randomtape.h"  // создание случайной ленты
+#include "../Tape/tape.h"                   // ленты
+#include "../Sorter/sorter.h"               // сортировщик
 using namespace std;
 
 struct Configurations
@@ -20,114 +21,87 @@ struct Configurations
     int write_delay;  // задержка записывания
 };
 
-class UnitTester
+configuration::Configuration new_configuration;
+TestRunner tr;
+string input_filename;
+string output_filename;
+
+bool SortAndCheck(int N, int M)
 {
-private:
-    configuration::Configuration new_configuration;
-    TestRunner tr;
-    string input_filename;
-    string output_filename;
+    populateFile(input_filename, N);
+    TapeFile input_tape(input_filename, new_configuration);
+    TapeFile output_tape(output_filename, new_configuration);
+    TapeSorter sorter(M);
+    sorter.tapesort(input_filename, output_filename, new_configuration);
+    return (isFileSorted(output_filename));
+}
 
-    // N - Максимальная память под ленту
-    // M - Максимальная память RAM
-    bool SortAndCheck(int N, int M)
-    {
-        populateFile(input_filename, N);
-        TapeFile input_tape(input_filename, new_configuration);
-        TapeFile output_tape(output_filename, new_configuration);
-        TapeSorter sorter(input_tape, output_tape, M);
-        sorter.sorttapes();
-        return (isFileSorted(output_filename));
-    }
-    bool TestFit()
-    {
-        srand(time(nullptr));
-        for (int i = 0; i < 10; ++i)
-        {
-            int N = rand() % 1000 + 1;
-            int M = rand() % N + 1;
-            SortAndCheck(N, M);
-        }
-    }
+void TestFit()
+{
+    srand(time(nullptr));
+    int N = rand() % 100 + 1;
+    int M = N * 2;
+    ASSERT(SortAndCheck(N, M));
+}
 
-    bool TestNotFit()
-    {
-        srand(time(nullptr));
-        for (int i = 1; i <= 10; ++i)
-        {
-            int N = rand() % 1000 + 1;
-            int M = N / (rand() % i + 1);
-            SortAndCheck(N, M);
-        }
-    }
+void TestNotFit()
+{
+    srand(time(nullptr));
+    int N = rand() % 100 + 1;
+    int M = N / (rand() % 5 + 1);
+    ASSERT(SortAndCheck(N, M));
+}
 
-    bool TestBigFit()
-    {
-        srand(time(nullptr));
-        for (int i = 0; i < 10; ++i)
-        {
-            int N = rand() % 100000000 + 1;
-            int M = rand() % N + 1;
-            SortAndCheck(N, M);
-        }
-    }
+void TestBigFit()
+{
+    srand(time(nullptr));
+    int N = rand() % 10000 + 1;
+    int M = N * 2;
+    ASSERT(SortAndCheck(N, M));
+}
 
-    bool TestBigNotFit()
-    {
-        srand(time(nullptr));
-        for (int i = 1; i <= 10; ++i)
-        {
-            int N = rand() % 1000 + 1;
-            int M = N / (rand() % i + 1);
-            SortAndCheck(N, M);
-        }
-    }
+void TestBigNotFit()
+{
+    srand(time(nullptr));
+    int N = rand() % 10000 + 1;
+    int M = N / (rand() % 5 + 1);
+    ASSERT(SortAndCheck(N, M));
+}
 
-public:
-    UnitTester(string _if, string _of) : input_filename(_if), output_filename(_of)
+void RunTests()
+{
     {
-        configuration::configurations_map cm = configuration::ReadConfigurations();
-        new_configuration.m_read_delay = stoi(cm["Tape"]["ReadDelay"]);
-        new_configuration.m_write_delay = stoi(cm["Tape"]["WriteDelay"]);
-        new_configuration.m_shift_delay = stoi(cm["Tape"]["ShiftDelay"]);
-        new_configuration.m_rewind_delay = stoi(cm["Tape"]["RewindDelay"]);
+        LOG_DURATION("Tests with small tape that fits into memory");
+        RUN_TEST(tr, TestFit);
     }
-    void RunTests()
     {
-        {
-            LOG_DURATION("Tests with small tape that fits into memory");
-            tr.RunTest(TestsFit(), "Tests with small tape that fits into memory");
-        }
-        {
-            LOG_DURATION("Tests with small tape that doesn't fit into memory");
-            tr.RunTest(TestsNotFit(), "Tests with small tape that doesn't fit into memory");
-        }
-        {
-            LOG_DURATION("Tests with big tape that fits into memory");
-            tr.RunTest(TestsBigFit(), "Tests with big tape that fits into memory");
-        }
-        {
-            LOG_DURATION("Tests with big tape that doesn't fit into memory");
-            tr.RunTest(TestsBigNotFit(), "Tests with big tape that doesn't fit into memory");
-        }
+        LOG_DURATION("Tests with small tape that doesn't fit into memory");
+        RUN_TEST(tr, TestNotFit);
     }
-};
+    {
+        LOG_DURATION("Tests with big tape that fits into memory");
+        RUN_TEST(tr, TestBigFit);
+    }
+    {
+        LOG_DURATION("Tests with big tape that doesn't fit into memory");
+        RUN_TEST(tr, TestBigNotFit);
+    }
+}
 
 int main(int argc, char **argv)
 {
-    if (argc != 3)
-    {
-        std::cerr << "Usage: " << argv[0] << " <input_file> <output_file>" << std::endl;
-        return 1;
-    }
 
-    std::string input_filename = argv[1];
-    std::string output_filename = argv[2];
+    configuration::configurations_map cm = configuration::ReadConfigurations();
+    new_configuration.m_read_delay = stoi(cm["Tape"]["ReadDelay"]);
+    new_configuration.m_write_delay = stoi(cm["Tape"]["WriteDelay"]);
+    new_configuration.m_shift_delay = stoi(cm["Tape"]["ShiftDelay"]);
+    new_configuration.m_rewind_delay = stoi(cm["Tape"]["RewindDelay"]);
 
-    UnitTester ut(input_filename, output_filename);
+    input_filename = "TestIO/input.txt";
+    output_filename = "TestIO/output.txt";
     {
         LOG_DURATION("Total Test Time")
-        ut.RunTests();
+        RunTests();
     }
     return 0;
 }

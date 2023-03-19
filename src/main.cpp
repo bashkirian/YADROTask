@@ -26,7 +26,7 @@ int main(int argc, char** argv) {
     string input_filename = argv[1];
     string output_filename = argv[2];
     try {
-        int M = 1000; // количество памяти, выделенное под ленты
+        int M = 10; // количество памяти, выделенное под ленты
         configuration::Configuration new_configuration;
         configuration::configurations_map cm = configuration::ReadConfigurations();
         new_configuration.m_read_delay = stoi(cm["Tape"]["ReadDelay"]);
